@@ -5,9 +5,18 @@
 		<title>Electron</title>
 	</head>
 	<body>
-		<video></video>
-		<select id="dropdown-source">
-			<option></option>
-		</select>
+		<div class="content">
+			<video></video>
+			<div class="row">
+				<label>
+					Video Source:
+					<select id="dropdown-source">
+						<option></option>
+					</select>
+				</label>
+				<button id="btn-start" class="button button--start">Start Recording</button>
+				<button id="btn-stop" class="button button--stop" disabled>Stop Recording</button>
+			</div>
+		</div>
 	</body>
 </html>
