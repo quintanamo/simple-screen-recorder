@@ -50,10 +50,6 @@ async function handleSetSource(event: Event, sourceId: string) {
 				mandatory: {
 					chromeMediaSource: 'desktop',
 					chromeMediaSourceId: sourceId,
-					minWidth: 1280,
-					maxWidth: 1280,
-					minHeight: 720,
-					maxHeight: 720,
 				},
 			},
 		});
