@@ -2,6 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { DesktopCapturerSource, IpcRendererEvent, dialog } from 'electron';
+import config from './config.json';
 
 // In the preload script.
 const { ipcRenderer } = require('electron');
@@ -85,7 +86,7 @@ function handleDataAvailable(e: any) {
 // Saves the video file on stop
 async function handleStop(e: any) {
 	const blob = new Blob(recordedChunks, {
-		type: 'video/webm; codecs=vp9',
+		type: config.fileType,
 	});
 
 	const buffer = Buffer.from(await blob.arrayBuffer());
@@ -93,9 +94,15 @@ async function handleStop(e: any) {
 	let dialogResult: string;
 	ipcRenderer
 		.invoke('save-file', buffer)
-		.then((returnValue) => {
-			dialogResult = returnValue;
-			console.log(dialogResult, returnValue);
+		.then((isSuccess) => {
+			if (isSuccess) {
+				const toastMessage = document.getElementById('toast');
+				toastMessage.textContent = 'Video successfully saved!';
+				toastMessage.classList.add('show');
+				setTimeout(function () {
+					toastMessage.classList.remove('show');
+				}, 3000);
+			}
 		})
 		.then(() => (recordedChunks = []));
 }

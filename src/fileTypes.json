@@ -1,0 +1,10 @@
+[
+	{
+		"type": "video/webm; codecs=vp9",
+		"ext": "webm"
+	},
+	{
+		"type": "video/mp4; codecs=\"avc1.4d002a\"",
+		"ext": "mp4"
+	}
+]
