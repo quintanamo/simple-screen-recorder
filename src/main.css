@@ -18,6 +18,14 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+.mt-4 {
+	margin-top: 4rem;
+}
+
+.flex-end {
+	justify-self: end;
+}
+
 .content {
 	display: flex;
 	flex-direction: column;
@@ -49,7 +57,7 @@ select {
 }
 
 .button {
-	padding: 1.8rem 3.6rem;
+	padding: 1.6rem;
 	font-size: 2rem;
 	color: white;
 	border-radius: 1rem;
@@ -67,6 +75,12 @@ select {
 
 .button:disabled {
 	background-color: #5a6268 !important;
+}
+
+.button__icon {
+	margin-right: 1rem;
+	font-size: 3rem;
+	line-height: 0;
 }
 
 .toast {
@@ -107,4 +121,26 @@ select {
 	to {
 		opacity: 0;
 	}
+}
+
+/* Settings */
+h2 {
+	font-size: 3rem;
+}
+
+form {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2rem;
+}
+
+form label {
+	width: 100%;
+}
+
+select,
+input {
+	display: flex;
 }

@@ -1,12 +1,11 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { DesktopCapturerSource, IpcRendererEvent, dialog } from 'electron';
+import { DesktopCapturerSource, IpcRendererEvent } from 'electron';
 import config from './config.json';
 
 // In the preload script.
 const { ipcRenderer } = require('electron');
-const { writeFile } = window.require('fs');
 
 let mediaRecorder: MediaRecorder;
 let recordedChunks: any[] = [];
@@ -91,7 +90,6 @@ async function handleStop(e: any) {
 
 	const buffer = Buffer.from(await blob.arrayBuffer());
 
-	let dialogResult: string;
 	ipcRenderer
 		.invoke('save-file', buffer)
 		.then((isSuccess) => {

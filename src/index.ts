@@ -7,17 +7,6 @@ const { writeFile } = require('fs');
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-const menuTemplate = [
-	{
-		label: 'File',
-		submenu: [{ label: 'Settings', role: 'settings' }],
-	},
-];
-
-// @ts-ignore
-const menu = Menu.buildFromTemplate(menuTemplate);
-Menu.setApplicationMenu(menu);
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
 	app.quit();
@@ -45,6 +34,37 @@ const createWindow = (): void => {
 	desktopCapturer.getSources({ types: ['window', 'screen'] }).then(async (sources) => {
 		mainWindow.webContents.send('POPULATE_SOURCES', sources);
 	});
+
+	const menuTemplate = [
+		{
+			label: 'File',
+			submenu: [
+				{
+					label: 'Settings',
+					click: () => {
+						const child = new BrowserWindow({
+							parent: mainWindow,
+							modal: true,
+							show: false,
+							width: 300,
+							height: 500,
+							resizable: false,
+							minimizable: false,
+						});
+						child.removeMenu();
+						child.loadFile('src/settings.html');
+						child.once('ready-to-show', () => {
+							child.show();
+						});
+					},
+				},
+			],
+		},
+	];
+
+	// @ts-ignore
+	const menu = Menu.buildFromTemplate(menuTemplate);
+	Menu.setApplicationMenu(menu);
 };
 
 // This method will be called when Electron has finished
@@ -74,6 +94,12 @@ app.on('activate', () => {
 ipcMain.handle('save-file', async (event, buffer) => {
 	const extension = fileTypes.find((t) => t.type === config.fileType).ext;
 	const { filePath } = await dialog.showSaveDialog({
+		filters: [
+			{
+				name: extension,
+				extensions: [extension],
+			},
+		],
 		buttonLabel: 'Save Video',
 		defaultPath: `screen-capture-${Date.now()}.${extension}`,
 	});

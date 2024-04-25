@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Electron</title>
+		<title>Simple Screen Recorder</title>
 	</head>
 	<body>
 		<div class="content">
@@ -14,8 +14,12 @@
 						<option></option>
 					</select>
 				</label>
-				<button id="btn-start" class="button button--start">Start Recording</button>
-				<button id="btn-stop" class="button button--stop" disabled>Stop Recording</button>
+				<button id="btn-start" class="button button--start">
+					<span class="button__icon">&#9679;</span>Start
+				</button>
+				<button id="btn-stop" class="button button--stop" disabled>
+					<span class="button__icon">&#9632;</span>Stop
+				</button>
 			</div>
 		</div>
 		<div id="toast" class="toast toast--success">Message</div>
