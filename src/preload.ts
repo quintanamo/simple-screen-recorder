@@ -1,16 +1,21 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { DesktopCapturerSource, IpcRendererEvent, dialog } from 'electron';
+import { DesktopCapturerSource, IpcRendererEvent } from 'electron';
+import { Settings } from './types/settings';
 
 // In the preload script.
 const { ipcRenderer } = require('electron');
-const { writeFile } = window.require('fs');
+let config = require('../config.json');
 
 let mediaRecorder: MediaRecorder;
 let recordedChunks: any[] = [];
 
-ipcRenderer.on('POPULATE_SOURCES', async (event: IpcRendererEvent, sources: DesktopCapturerSource[]) => {
+ipcRenderer.on('update-config', async (event: IpcRendererEvent, newConfig: Settings) => {
+	config = newConfig;
+});
+
+ipcRenderer.on('populate-sources', async (event: IpcRendererEvent, sources: DesktopCapturerSource[]) => {
 	const sourceDropdown = document.getElementById('dropdown-source');
 	const startButton = document.getElementById('btn-start');
 	const stopButton = document.getElementById('btn-stop');
@@ -26,6 +31,7 @@ ipcRenderer.on('POPULATE_SOURCES', async (event: IpcRendererEvent, sources: Desk
 		const sourceId = (<HTMLSelectElement>e.target).value;
 		if (sourceId != null && sourceId != '') {
 			handleSetSource(null, sourceId);
+			sourceDropdown.removeChild(sourceDropdown.children[0]);
 		}
 	});
 
@@ -85,17 +91,22 @@ function handleDataAvailable(e: any) {
 // Saves the video file on stop
 async function handleStop(e: any) {
 	const blob = new Blob(recordedChunks, {
-		type: 'video/webm; codecs=vp9',
+		type: config.fileType,
 	});
 
 	const buffer = Buffer.from(await blob.arrayBuffer());
 
-	let dialogResult: string;
 	ipcRenderer
 		.invoke('save-file', buffer)
-		.then((returnValue) => {
-			dialogResult = returnValue;
-			console.log(dialogResult, returnValue);
+		.then((isSuccess) => {
+			if (isSuccess) {
+				const toastMessage = document.getElementById('toast');
+				toastMessage.textContent = 'Video successfully saved!';
+				toastMessage.classList.add('show');
+				setTimeout(function () {
+					toastMessage.classList.remove('show');
+				}, 3000);
+			}
 		})
 		.then(() => (recordedChunks = []));
 }

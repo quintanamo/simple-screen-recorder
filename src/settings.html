@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" type="text/css" href="./main.css" />
+		<title>Settings</title>
+	</head>
+	<body>
+		<div class="content">
+			<h2>Settings</h2>
+			<form id="settings-form">
+				<label
+					>Recording File Type
+					<select id="settings-file-type">
+						<option value='video/mp4; codecs="avc1.4d002a"'>MP4</option>
+						<option value="video/webm; codecs=vp9">WEBM</option>
+					</select>
+				</label>
+				<button class="button button--start mt-4 flex-end" type="submit">Save</button>
+			</form>
+			<div id="toast" class="toast toast--success"></div>
+		</div>
+		<script>
+			const electron = require('electron');
+			const { ipcRenderer } = electron;
+			const settingsForm = document.getElementById('settings-form');
+			const settingsFileType = document.getElementById('settings-file-type');
+			const toastMessage = document.getElementById('toast');
+
+			settingsForm.addEventListener('submit', (e) => {
+				e.preventDefault();
+				const config = {
+					fileType: settingsFileType.value,
+				};
+				ipcRenderer.send('save-settings', config);
+				toastMessage.textContent = 'Settings saved!';
+				toastMessage.classList.add('show');
+				setTimeout(function () {
+					toastMessage.classList.remove('show');
+				}, 3000);
+			});
+
+			ipcRenderer.on('POPULATE_SETTINGS', (event, config) => {
+				settingsFileType.value = config.fileType;
+			});
+		</script>
+	</body>
+</html>
