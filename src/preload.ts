@@ -2,15 +2,20 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { DesktopCapturerSource, IpcRendererEvent } from 'electron';
-import config from './config.json';
+import { Settings } from './types/settings';
 
 // In the preload script.
 const { ipcRenderer } = require('electron');
+let config = require('../config.json');
 
 let mediaRecorder: MediaRecorder;
 let recordedChunks: any[] = [];
 
-ipcRenderer.on('POPULATE_SOURCES', async (event: IpcRendererEvent, sources: DesktopCapturerSource[]) => {
+ipcRenderer.on('update-config', async (event: IpcRendererEvent, newConfig: Settings) => {
+	config = newConfig;
+});
+
+ipcRenderer.on('populate-sources', async (event: IpcRendererEvent, sources: DesktopCapturerSource[]) => {
 	const sourceDropdown = document.getElementById('dropdown-source');
 	const startButton = document.getElementById('btn-start');
 	const stopButton = document.getElementById('btn-stop');
@@ -26,6 +31,7 @@ ipcRenderer.on('POPULATE_SOURCES', async (event: IpcRendererEvent, sources: Desk
 		const sourceId = (<HTMLSelectElement>e.target).value;
 		if (sourceId != null && sourceId != '') {
 			handleSetSource(null, sourceId);
+			sourceDropdown.removeChild(sourceDropdown.children[0]);
 		}
 	});
 
